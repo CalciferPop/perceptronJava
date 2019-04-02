@@ -16,6 +16,8 @@ public class Perceptron {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        RNA_Perceptron obA_Perceptron = new RNA_Perceptron();
+        
     }
     
 }
