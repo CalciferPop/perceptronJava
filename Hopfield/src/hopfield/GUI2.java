@@ -25,11 +25,11 @@ public class GUI2 extends javax.swing.JFrame {
     private JButton[][] MatrizPatron2;
     private JButton[][] MatrizPatronEntrada;
 
-    private int[][] matrizPa1, matrizPa2, matrizPE;
+    private int[][] matrizPa1, matrizPa2, matrizPE, matrizW;
     private int[][] matrizTransPa1,matrizTransPa2;
     private int[][] matrizIdentidad;
 
-    private int[] vectorPa1, vectorPa2, vectorPE;
+    private int[] vectorPa1, vectorPa2, vectorPE, vectorFuncionE;
 
     int num_patronesM = 2;
     double recuBuena = 0;
@@ -216,10 +216,12 @@ public class GUI2 extends javax.swing.JFrame {
         matrizPa1 = new int[dimensX][dimensY];
         matrizPa2 = new int[dimensX][dimensY];
         matrizPE = new int[dimensX][dimensY];
+        matrizW = new int[tam_vector][tam_vector];
 
         vectorPa1 = new int[tam_vector];
         vectorPa2 = new int[tam_vector];
         vectorPE = new int[tam_vector];
+        vectorFuncionE = new int[tam_vector];
 
         pnl_patron1.setLayout(new GridLayout(dimensX, dimensY));
         pnl_patron2.setLayout(new GridLayout(dimensX, dimensY));
@@ -321,7 +323,7 @@ public class GUI2 extends javax.swing.JFrame {
         // TODO add your handling code here: 
         //Se busca que los patrones sean un 50% ortogonales
         m_generaMatrizIdentidad();
-
+        calcula_matriz_pesos(vectorPa1,vectorPa2);
         if ("Excelente".equals(m_recuperacion())) {
             System.out.println("La recuperacion es excelente con un valor de: " + recuExcelente);
             if (m_50percentOrtogo(vectorPa1, vectorPa2)) {
@@ -466,10 +468,10 @@ public class GUI2 extends javax.swing.JFrame {
     
     
    public void  m_generaMatrizIdentidad(){
-        
-       matrizIdentidad = new int[dimensX][dimensY];
-       for (int i = 0; i < dimensX; i++) {
-           for (int j = 0; j < dimensY; j++) {
+        int num_ne = dimensX * dimensY;
+       matrizIdentidad = new int[num_ne][num_ne];
+       for (int i = 0; i < num_ne; i++) {
+           for (int j = 0; j < num_ne; j++) {
                if (i==j) {
                  matrizIdentidad[i][i] = 1;  
                }else{
@@ -635,6 +637,51 @@ public class GUI2 extends javax.swing.JFrame {
             }
             System.out.println("\n----------------------------------------");
 
+        }
+    }
+    
+    public void calcula_matriz_pesos(int[] p1, int[] p2)
+    {
+        int num_ne = dimensX * dimensY;
+        int[][] matrizW1 = new int[num_ne][num_ne];
+        int[][] matrizW2 = new int[num_ne][num_ne];
+        int[][] matrizW1_I = new int[num_ne][num_ne];
+        int[][] matrizW2_I = new int[num_ne][num_ne];
+        //m_transpuestaP(p1);
+        //Se Calcula la matriz PkT*Pk del patron 1 y patron 2
+        for (int i = 0; i < num_ne; i++) {
+            for (int j = 0; j < num_ne; j++) {
+                matrizW1[i][j]=p1[i]*p1[j];
+                matrizW2[i][j]=p2[i]*p2[j];
+            }
+        }
+        //A la matriz resutlante se le resta la matriz identidad
+         for (int i = 0; i < num_ne; i++) {
+            for (int j = 0; j < num_ne; j++) {
+                matrizW1_I[i][j]=matrizW1[i][j]-matrizIdentidad[i][j];
+                matrizW2_I[i][j]=matrizW2[i][j]-matrizIdentidad[i][j];
+            }
+        }
+         //Se obtiene la matriz de pesos W
+        for (int i = 0; i < num_ne; i++) {
+            for (int j = 0; j < num_ne; j++) {
+                matrizW[i][j]=matrizW1_I[i][j]+matrizW2_I[i][j];
+            }
+        }
+         
+        
+    }
+    public void ejecucion()
+    {
+        //Funciona de entrada
+        int suma=0;
+        int num_ne = dimensX * dimensY;
+        for (int i = 0; i < num_ne; i++) {
+            for (int j = 0; j < num_ne; j++) {
+                suma+=matrizW[j][i]*vectorPE[j];
+            }
+            vectorFuncionE[i]=suma;
+            suma=0;
         }
     }
 
