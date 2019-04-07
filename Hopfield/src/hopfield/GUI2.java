@@ -9,10 +9,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 /**
  *
@@ -24,12 +21,13 @@ public class GUI2 extends javax.swing.JFrame {
     private JButton[][] MatrizPatron1;
     private JButton[][] MatrizPatron2;
     private JButton[][] MatrizPatronEntrada;
+    private JButton[][] MatrizPatronSalida;
 
     private int[][] matrizPa1, matrizPa2, matrizPE, matrizW;
-    private int[][] matrizTransPa1,matrizTransPa2;
+    private int[][] matrizTransPa1, matrizTransPa2;
     private int[][] matrizIdentidad;
 
-    private int[] vectorPa1, vectorPa2, vectorPE, vectorFuncionE;
+    private int[] vectorPa1, vectorPa2, vectorPE, vectorFuncionE, vectorSalida;
 
     int num_patronesM = 2;
     double recuBuena = 0;
@@ -41,6 +39,12 @@ public class GUI2 extends javax.swing.JFrame {
      */
     public GUI2() {
         initComponents();
+        pnl_patronE.setVisible(false);
+        pnl_patronSa.setVisible(false);
+        pnl_patronCoincidencia.setVisible(false);
+        //btn_funcionamiento.setVisible(false);
+        btnEntrenar.setVisible(false);
+        this.setTitle("RNA -- Hopfield para reconocimiento de patrones");
 
         this.setVisible(true);
 
@@ -64,14 +68,17 @@ public class GUI2 extends javax.swing.JFrame {
         pnl_patron1 = new javax.swing.JPanel();
         pnl_patron2 = new javax.swing.JPanel();
         pnl_patronE = new javax.swing.JPanel();
-        pnl_patronSa = new javax.swing.JPanel();
         btnEntrenar = new javax.swing.JButton();
+        btn_funcionamiento = new javax.swing.JButton();
+        btn_ingresarPatron = new javax.swing.JButton();
+        pnl_patronCoincidencia = new javax.swing.JPanel();
+        pnl_patronSa = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Dimensión en X:");
 
-        jLabel2.setText("Dimensión en X:");
+        jLabel2.setText("Dimensión en Y:");
 
         btnInicio.setText("Crear Base de Patrones");
         btnInicio.addActionListener(new java.awt.event.ActionListener() {
@@ -119,24 +126,11 @@ public class GUI2 extends javax.swing.JFrame {
         pnl_patronE.setLayout(pnl_patronELayout);
         pnl_patronELayout.setHorizontalGroup(
             pnl_patronELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 500, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         pnl_patronELayout.setVerticalGroup(
             pnl_patronELayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 247, Short.MAX_VALUE)
-        );
-
-        pnl_patronSa.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Mejor Coincidencia", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 10))); // NOI18N
-
-        javax.swing.GroupLayout pnl_patronSaLayout = new javax.swing.GroupLayout(pnl_patronSa);
-        pnl_patronSa.setLayout(pnl_patronSaLayout);
-        pnl_patronSaLayout.setHorizontalGroup(
-            pnl_patronSaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        pnl_patronSaLayout.setVerticalGroup(
-            pnl_patronSaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 291, Short.MAX_VALUE)
         );
 
         btnEntrenar.setText("Entrenar la red");
@@ -146,6 +140,46 @@ public class GUI2 extends javax.swing.JFrame {
             }
         });
 
+        btn_funcionamiento.setText("Funcionamiento");
+        btn_funcionamiento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_funcionamientoActionPerformed(evt);
+            }
+        });
+
+        btn_ingresarPatron.setText("Ingresar patron de entrada");
+        btn_ingresarPatron.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ingresarPatronActionPerformed(evt);
+            }
+        });
+
+        pnl_patronCoincidencia.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Mejor coincidencia", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 10))); // NOI18N
+
+        javax.swing.GroupLayout pnl_patronCoincidenciaLayout = new javax.swing.GroupLayout(pnl_patronCoincidencia);
+        pnl_patronCoincidencia.setLayout(pnl_patronCoincidenciaLayout);
+        pnl_patronCoincidenciaLayout.setHorizontalGroup(
+            pnl_patronCoincidenciaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 500, Short.MAX_VALUE)
+        );
+        pnl_patronCoincidenciaLayout.setVerticalGroup(
+            pnl_patronCoincidenciaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        pnl_patronSa.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Patrón de salida", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 3, 10))); // NOI18N
+
+        javax.swing.GroupLayout pnl_patronSaLayout = new javax.swing.GroupLayout(pnl_patronSa);
+        pnl_patronSa.setLayout(pnl_patronSaLayout);
+        pnl_patronSaLayout.setHorizontalGroup(
+            pnl_patronSaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 500, Short.MAX_VALUE)
+        );
+        pnl_patronSaLayout.setVerticalGroup(
+            pnl_patronSaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -154,14 +188,16 @@ public class GUI2 extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnl_patronE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(pnl_patronSa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnl_patron1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(pnl_patron2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(pnl_patronE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pnl_patron1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pnl_patron2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(pnl_patronSa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(pnl_patronCoincidencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -172,12 +208,15 @@ public class GUI2 extends javax.swing.JFrame {
                         .addComponent(txtDimensY, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnInicio)
-                        .addGap(47, 47, 47)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEntrenar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2)
-                        .addGap(43, 43, 43)))
-                .addContainerGap())
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_ingresarPatron)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btn_funcionamiento)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton2)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,7 +229,9 @@ public class GUI2 extends javax.swing.JFrame {
                     .addComponent(txtDimensY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnInicio)
                     .addComponent(jButton2)
-                    .addComponent(btnEntrenar))
+                    .addComponent(btnEntrenar)
+                    .addComponent(btn_funcionamiento)
+                    .addComponent(btn_ingresarPatron))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(pnl_patron2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -198,8 +239,9 @@ public class GUI2 extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pnl_patronE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnl_patronSa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(15, Short.MAX_VALUE))
+                    .addComponent(pnl_patronCoincidencia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnl_patronSa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -226,6 +268,8 @@ public class GUI2 extends javax.swing.JFrame {
         pnl_patron1.setLayout(new GridLayout(dimensX, dimensY));
         pnl_patron2.setLayout(new GridLayout(dimensX, dimensY));
         pnl_patronE.setLayout(new GridLayout(dimensX, dimensY));
+        pnl_patronSa.setLayout(new GridLayout(dimensX, dimensY));
+        pnl_patronCoincidencia.setLayout(new GridLayout(dimensX, dimensY));
 
         m_tamBotones(dimensX, dimensY);
         int contadorX, contadorY;
@@ -284,37 +328,18 @@ public class GUI2 extends javax.swing.JFrame {
 
             }
         }
-
-//        System.out.println("Patron 1");
-//        m_muestraMatriz(matrizPa1);
-//        System.out.println("Vector Patron 1");
-//        m_muestraVector(vectorPa1);
-//        System.out.println("");
-//        System.out.println("-----------------------------------------------------");
-//
-//        System.out.println("Patron 2");
-//        m_muestraMatriz(matrizPa2);
-//        System.out.println("Vector Patron 1");
-//        m_muestraVector(vectorPa2);
-//        System.out.println("");
-//        System.out.println("-----------------------------------------------------");
-//
-//        System.out.println("Patron Entrada");
-//        m_muestraMatriz(matrizPE);
-//        System.out.println("Vector Patron Entrada");
-//        m_muestraVector(vectorPE);
     }
 
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
         pintaTableros();
+        btnInicio.setVisible(false);
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.dispose();
-        this.hide();
         GUI2 gui2 = new GUI2();
 
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -323,24 +348,59 @@ public class GUI2 extends javax.swing.JFrame {
         // TODO add your handling code here: 
         //Se busca que los patrones sean un 50% ortogonales
         m_generaMatrizIdentidad();
-        calcula_matriz_pesos(vectorPa1,vectorPa2);
+
         if ("Excelente".equals(m_recuperacion())) {
             System.out.println("La recuperacion es excelente con un valor de: " + recuExcelente);
             if (m_50percentOrtogo(vectorPa1, vectorPa2)) {
                 System.out.println("Los patrones son lo suf. ortogonales con un valor de: " + ortogonalidad);
-                m_transpuestaP(vectorPa1);
+
             } else {
                 System.out.println("Los patrones NO son lo suf. ortogonales con un valor de: " + ortogonalidad);
             }
-            
+
         } else if ("Buena".equals(m_recuperacion())) {
             //Regresar al modelado 
             System.out.println("La recuperacion buena con un valor de: " + recuBuena);
-            
-            
+
         }
 
     }//GEN-LAST:event_btnEntrenarActionPerformed
+
+    private void btn_ingresarPatronActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ingresarPatronActionPerformed
+        // TODO add your handling code here:
+        btn_funcionamiento.setVisible(true);
+        pnl_patronE.setVisible(true);
+        btn_ingresarPatron.setVisible(false);
+        this.pack();
+    }//GEN-LAST:event_btn_ingresarPatronActionPerformed
+
+    private void btn_funcionamientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_funcionamientoActionPerformed
+        // TODO add your handling code here:
+        System.out.println("PATRON 1:");
+        m_muestraVector(vectorPa1);
+        System.out.println("");
+        System.out.println("PATRON 2:");
+        m_muestraVector(vectorPa1);
+        System.out.println("");
+        System.out.println("MATRIZ IDENTIDAD:");
+        m_generaMatrizIdentidad();
+        System.out.println("");
+        System.out.println("MATRIZ DE PESOS");
+        calcula_matriz_pesos(vectorPa1, vectorPa2);
+        m_muestraMatriz(matrizW);
+        System.out.println("Aprendizaje");
+        ejecucion();
+        System.out.println("");
+        System.out.println("Vector salida (sin funcion escalon)");
+        m_muestraVector(vectorFuncionE);
+        System.out.println("");
+        System.out.println("Vector Salida (Aplicando la funcion escalon)");
+        m_aplica_funcionEScalon(vectorFuncionE);
+        m_muestraVector(vectorSalida);
+        m_muestraResultado(vectorPa1, vectorPa2, vectorSalida);
+
+
+    }//GEN-LAST:event_btn_funcionamientoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -377,6 +437,24 @@ public class GUI2 extends javax.swing.JFrame {
         });
     }
 
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEntrenar;
+    private javax.swing.JButton btnInicio;
+    private javax.swing.JButton btn_funcionamiento;
+    private javax.swing.JButton btn_ingresarPatron;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel pnl_patron1;
+    private javax.swing.JPanel pnl_patron2;
+    private javax.swing.JPanel pnl_patronCoincidencia;
+    private javax.swing.JPanel pnl_patronE;
+    private javax.swing.JPanel pnl_patronSa;
+    private javax.swing.JTextField txtDimensX;
+    private javax.swing.JTextField txtDimensY;
+    // End of variables declaration//GEN-END:variables
+
     private boolean validarDimensiones() {
         //definición inicial de variable de retorno
         boolean valido = false;
@@ -395,21 +473,6 @@ public class GUI2 extends javax.swing.JFrame {
         }
         return valido;
     }
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnEntrenar;
-    private javax.swing.JButton btnInicio;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel pnl_patron1;
-    private javax.swing.JPanel pnl_patron2;
-    private javax.swing.JPanel pnl_patronE;
-    private javax.swing.JPanel pnl_patronSa;
-    private javax.swing.JTextField txtDimensX;
-    private javax.swing.JTextField txtDimensY;
-    // End of variables declaration//GEN-END:variables
 
     private String m_recuperacion() {
         int num_neuronasN = dimensX * dimensY;
@@ -436,8 +499,8 @@ public class GUI2 extends javax.swing.JFrame {
         for (int i = 0; i < p1.length; i++) {
             ortogonalidad += (p1[i] * p2[i]);
         }
-        if (ortogonalidad <= 0.4*num_neuronasN) {
-       // if (ortogonalidad <= 0) {
+        if (ortogonalidad <= 0.4 * num_neuronasN) {
+            // if (ortogonalidad <= 0) {
             bandera = true;
         } else {
             bandera = false;
@@ -446,44 +509,35 @@ public class GUI2 extends javax.swing.JFrame {
         return bandera;
     }
 
-    public void m_transpuestaP(int[] patron) {
+    public int[][] m_transpuestaP(int[] patron) {
         int num_ne = dimensX * dimensY;
         int cont = 0;
-        matrizTransPa1 = new int[1][num_ne];
+        int[][] matrizTrans = new int[1][num_ne];
         for (int y = 0; y < num_ne; y++) {
-            matrizTransPa1[0][y] = patron[cont];
+            matrizTrans[0][y] = patron[cont];
             cont++;
         }
-
-        m_muestraVector(patron);
-        System.out.println("Transpuesta :");
-        String str = "";
-        for (int j = 0; j < num_ne; j++) {
-            //str += matrizTransPa1[0][j] + "\n";
-            System.out.println(matrizTransPa1[0][j]);
-        }
-        
+        return matrizTrans;
 
     }
-    
-    
-   public void  m_generaMatrizIdentidad(){
+
+    public void m_generaMatrizIdentidad() {
         int num_ne = dimensX * dimensY;
-       matrizIdentidad = new int[num_ne][num_ne];
-       for (int i = 0; i < num_ne; i++) {
-           for (int j = 0; j < num_ne; j++) {
-               if (i==j) {
-                 matrizIdentidad[i][i] = 1;  
-               }else{
-                  matrizIdentidad[i][i] = 0;   
-               }
-               System.out.print(matrizIdentidad[i][i] );
-               
-           }
-           System.out.print("\n");
-       }
-       System.out.println();
-       
+        matrizIdentidad = new int[num_ne][num_ne];
+        for (int i = 0; i < num_ne; i++) {
+            for (int j = 0; j < num_ne; j++) {
+                if (i == j) {
+                    matrizIdentidad[i][i] = 1;
+                } else {
+                    matrizIdentidad[i][i] = 0;
+                }
+                System.out.print(matrizIdentidad[i][i]);
+
+            }
+            System.out.print("\n");
+        }
+        System.out.println();
+
     }
 
     private void m_tamBotones(int cantX, int cantY) {
@@ -512,11 +566,11 @@ public class GUI2 extends javax.swing.JFrame {
             String[] arrOfStr = str.split(",");
             int x = Integer.parseInt(arrOfStr[0]);
             int y = Integer.parseInt(arrOfStr[1]);
-            System.out.println("Patron 1 :" + x + "," + y);
+            //System.out.println("Patron 1 :" + x + "," + y);
             matrizPa1[x][y] = -1;
-            m_muestraMatriz(matrizPa1);
+            // m_muestraMatriz(matrizPa1);
             vectorPa1 = MatrizToVector(matrizPa1);
-            m_muestraVector(vectorPa1);
+            //m_muestraVector(vectorPa1);
 
         } else {
             btnNuevo.setBackground(Color.RED);
@@ -525,11 +579,11 @@ public class GUI2 extends javax.swing.JFrame {
             String[] arrOfStr = str.split(",");
             int x = Integer.parseInt(arrOfStr[0]);
             int y = Integer.parseInt(arrOfStr[1]);
-            System.out.println("Patron 1 :" + x + "," + y);
+            //System.out.println("Patron 1 :" + x + "," + y);
             matrizPa1[x][y] = 1;
-            m_muestraMatriz(matrizPa1);
+            //m_muestraMatriz(matrizPa1);
             vectorPa1 = MatrizToVector(matrizPa1);
-            m_muestraVector(vectorPa1);
+            // m_muestraVector(vectorPa1);
         }
 
     }
@@ -542,11 +596,11 @@ public class GUI2 extends javax.swing.JFrame {
             String[] arrOfStr = str.split(",");
             int x = Integer.parseInt(arrOfStr[0]);
             int y = Integer.parseInt(arrOfStr[1]);
-            System.out.println("Patron 2 :" + x + "," + y);
+            //System.out.println("Patron 2 :" + x + "," + y);
             matrizPa2[x][y] = -1;
-            m_muestraMatriz(matrizPa2);
+            //m_muestraMatriz(matrizPa2);
             vectorPa2 = MatrizToVector(matrizPa2);
-            m_muestraVector(vectorPa2);
+            //m_muestraVector(vectorPa2);
         } else {
             btnPatron2.setBackground(Color.RED);
             btnPatron2.setText("1");
@@ -554,11 +608,11 @@ public class GUI2 extends javax.swing.JFrame {
             String[] arrOfStr = str.split(",");
             int x = Integer.parseInt(arrOfStr[0]);
             int y = Integer.parseInt(arrOfStr[1]);
-            System.out.println("Patron 2 :" + x + "," + y);
+            // System.out.println("Patron 2 :" + x + "," + y);
             matrizPa2[x][y] = 1;
-            m_muestraMatriz(matrizPa2);
+            //m_muestraMatriz(matrizPa2);
             vectorPa2 = MatrizToVector(matrizPa2);
-            m_muestraVector(vectorPa2);
+            //m_muestraVector(vectorPa2);
         }
     }
 
@@ -570,10 +624,10 @@ public class GUI2 extends javax.swing.JFrame {
             String[] arrOfStr = str.split(",");
             int x = Integer.parseInt(arrOfStr[0]);
             int y = Integer.parseInt(arrOfStr[1]);
-            System.out.println("Patron Entrada :" + x + "," + y);
+            //System.out.println("Patron Entrada :" + x + "," + y);
             matrizPE[x][y] = -1;
             vectorPE = MatrizToVector(matrizPE);
-            m_muestraVector(vectorPE);
+            //m_muestraVector(vectorPE);
         } else {
             btnPatronE.setBackground(Color.RED);
             btnPatronE.setText("1");
@@ -582,10 +636,10 @@ public class GUI2 extends javax.swing.JFrame {
             String[] arrOfStr = str.split(",");
             int x = Integer.parseInt(arrOfStr[0]);
             int y = Integer.parseInt(arrOfStr[1]);
-            System.out.println("Patron Entrada :" + x + "," + y);
+            // System.out.println("Patron Entrada :" + x + "," + y);
             matrizPE[x][y] = 1;
             vectorPE = MatrizToVector(matrizPE);
-            m_muestraVector(vectorPE);
+            //m_muestraVector(vectorPE);
         }
     }
 
@@ -639,50 +693,194 @@ public class GUI2 extends javax.swing.JFrame {
 
         }
     }
-    
-    public void calcula_matriz_pesos(int[] p1, int[] p2)
-    {
+
+    public void calcula_matriz_pesos(int[] p1, int[] p2) {
         int num_ne = dimensX * dimensY;
         int[][] matrizW1 = new int[num_ne][num_ne];
         int[][] matrizW2 = new int[num_ne][num_ne];
         int[][] matrizW1_I = new int[num_ne][num_ne];
         int[][] matrizW2_I = new int[num_ne][num_ne];
+
+        matrizTransPa1 = m_transpuestaP(p1);
+        matrizTransPa2 = m_transpuestaP(p2);
         //m_transpuestaP(p1);
         //Se Calcula la matriz PkT*Pk del patron 1 y patron 2
         for (int i = 0; i < num_ne; i++) {
             for (int j = 0; j < num_ne; j++) {
-                matrizW1[i][j]=p1[i]*p1[j];
-                matrizW2[i][j]=p2[i]*p2[j];
+                matrizW1[i][j] = p1[i] * p1[j];
+                matrizW2[i][j] = p2[i] * p2[j];
+                ////                matrizW1[i][j] = matrizTransPa1[0][i] * p1[j];
+                ////                matrizW2[i][j] = matrizTransPa2[0][j] * p2[j];
             }
         }
         //A la matriz resutlante se le resta la matriz identidad
-         for (int i = 0; i < num_ne; i++) {
-            for (int j = 0; j < num_ne; j++) {
-                matrizW1_I[i][j]=matrizW1[i][j]-matrizIdentidad[i][j];
-                matrizW2_I[i][j]=matrizW2[i][j]-matrizIdentidad[i][j];
-            }
-        }
-         //Se obtiene la matriz de pesos W
         for (int i = 0; i < num_ne; i++) {
             for (int j = 0; j < num_ne; j++) {
-                matrizW[i][j]=matrizW1_I[i][j]+matrizW2_I[i][j];
+                matrizW1_I[i][j] = matrizW1[i][j] - matrizIdentidad[i][j];
+                matrizW2_I[i][j] = matrizW2[i][j] - matrizIdentidad[i][j];
             }
         }
-         
-        
+        //Se obtiene la matriz de pesos W
+        for (int i = 0; i < num_ne; i++) {
+            for (int j = 0; j < num_ne; j++) {
+                matrizW[i][j] = matrizW1_I[i][j] + matrizW2_I[i][j];
+            }
+        }
+
     }
-    public void ejecucion()
-    {
+
+    public void ejecucion() {
         //Funciona de entrada
-        int suma=0;
+        int suma = 0;
         int num_ne = dimensX * dimensY;
         for (int i = 0; i < num_ne; i++) {
             for (int j = 0; j < num_ne; j++) {
-                suma+=matrizW[j][i]*vectorPE[j];
+                suma += matrizW[j][i] * vectorPE[j];
             }
-            vectorFuncionE[i]=suma;
-            suma=0;
+            vectorFuncionE[i] = suma;
+            suma = 0;
         }
+    }
+
+    private int[] m_aplica_funcionEScalon(int[] vectorFuncionE) {
+        vectorSalida = new int[vectorFuncionE.length];
+        for (int i = 0; i < vectorFuncionE.length; i++) {
+            if (vectorFuncionE[i] >= 0) {
+                vectorSalida[i] = 1;
+            }
+            if (vectorFuncionE[i] < 0) {
+                vectorSalida[i] = -1;
+            }
+        }
+        return vectorSalida;
+    }
+
+    public int[][] vectorToMatriz(int[] p) {
+
+        int matriz[][] = new int[dimensX][dimensY];
+        int cont = 0;
+
+        for (int x = 0; x < dimensX; x++) {
+            for (int y = 0; y < dimensY; y++) {
+                matriz[x][y] = p[cont];
+                cont++;
+            }
+        }
+        // m_muestraMatriz(matriz);
+
+        return matriz;
+
+    }
+
+    private void m_muestraResultado(int[] vectorPa1, int[] vectorPa2, int[] vectorSalida) {
+
+        int num_neuronasN = dimensX * dimensY;
+        boolean banderaP1PS, banderaP2PS;
+        double ortogonP1PS, ortogonP2PS;
+        ortogonP1PS = 0;
+        ortogonP2PS = 0;
+        int contadorX, contadorY;
+        MatrizPatronSalida = new JButton[dimensX][dimensY];
+        int[][] matrizPatr1 = vectorToMatriz(vectorPa1);
+        int[][] matrizPatr2 = vectorToMatriz(vectorPa2);
+        int[][] matrizSalida = vectorToMatriz(vectorSalida);
+
+        //Obtener cual de los patrones es 90% parecido al patron de salida
+        for (int i = 0; i < vectorPa1.length; i++) {
+            ortogonP1PS += (vectorPa1[i] * vectorSalida[i]);
+        }
+        if (ortogonP1PS >= 0.8 * num_neuronasN) {
+            banderaP1PS = true;
+            System.out.println("");
+            System.out.println("Patron 1 90% parecido ");
+            m_muestraVector(vectorPa1);
+        } else {
+            banderaP1PS = false;
+            System.out.println("");
+            System.out.println("Patron 1 NO ES 90% parecido ");
+            m_muestraVector(vectorPa1);
+        }
+
+        for (int i = 0; i < vectorPa2.length; i++) {
+            ortogonP2PS += (vectorPa2[i] * vectorSalida[i]);
+        }
+        if (ortogonP2PS >= 0.8 * num_neuronasN) {
+            banderaP2PS = true;
+            System.out.println("");
+            System.out.println("Patron 2 90% parecido ");
+            m_muestraVector(vectorPa2);
+        } else {
+            banderaP2PS = false;
+            System.out.println("");
+            System.out.println("Patron 2 NO ES 90% parecido ");
+            m_muestraVector(vectorPa2);
+        }
+
+        if (banderaP1PS) {
+            System.out.println("\nel patron 1 es el mas parecido a la salida");
+            for (contadorX = 0; contadorX < dimensX; contadorX++) {
+                for (contadorY = 0; contadorY < dimensY; contadorY++) {
+                    JButton btnSalida = new JButton();
+                    m_tamBotones(dimensX, dimensY);
+                    btnSalida.setSize(30, 30);
+                    btnSalida.setBackground(Color.white);
+                    btnSalida.setText(String.valueOf(matrizPatr1[contadorX][contadorY]));
+                    if (btnSalida.getText().equals("1")) {
+                        btnSalida.setBackground(Color.red);
+                    }
+                    MatrizPatronSalida[contadorX][contadorY] = btnSalida;
+
+                    pnl_patronSa.add(MatrizPatronSalida[contadorX][contadorY]);
+                    pnl_patronSa.revalidate();
+                    pnl_patronSa.repaint();
+                    pnl_patronSa.setVisible(true);
+                    
+                    
+                    pnl_patronCoincidencia.add(MatrizPatron1[contadorX][contadorY]);
+                    pnl_patronCoincidencia.revalidate();
+                    pnl_patronCoincidencia.repaint();
+                    pnl_patronCoincidencia.setVisible(true);
+                    
+                    
+                    
+
+                }
+            }
+        }
+
+        if (banderaP2PS) {
+            System.out.println("\nel patron 2 es el mas parecido a la salida");
+
+            for (contadorX = 0; contadorX < dimensX; contadorX++) {
+                for (contadorY = 0; contadorY < dimensY; contadorY++) {
+                    JButton btnSalida = new JButton();
+                    m_tamBotones(dimensX, dimensY);
+                    btnSalida.setSize(30, 30);
+                    btnSalida.setBackground(Color.white);
+                    btnSalida.setText(String.valueOf(matrizPatr2[contadorX][contadorY]));
+                    if (btnSalida.getText().equals("1")) {
+                        btnSalida.setBackground(Color.red);
+                    }
+                    MatrizPatronSalida[contadorX][contadorY] = btnSalida;
+
+                    pnl_patronSa.add(MatrizPatronSalida[contadorX][contadorY]);
+                    pnl_patronSa.revalidate();
+                    pnl_patronSa.repaint();
+                    pnl_patronSa.setVisible(true);
+                    
+                    
+                    pnl_patronCoincidencia.add(MatrizPatron2[contadorX][contadorY]);
+                    pnl_patronCoincidencia.revalidate();
+                    pnl_patronCoincidencia.repaint();
+                    pnl_patronCoincidencia.setVisible(true);
+                    
+                    
+                    
+
+                }
+            }
+        }
+
     }
 
 }
