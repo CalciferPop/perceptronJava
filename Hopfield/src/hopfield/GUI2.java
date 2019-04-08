@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -332,8 +333,36 @@ public class GUI2 extends javax.swing.JFrame {
 
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
-        pintaTableros();
-        btnInicio.setVisible(false);
+       
+        validarDimensiones();
+        if ("Excelente".equals(m_recuperacion())) {
+            System.out.println("La recuperacion es excelente con un valor de: " + recuExcelente);
+            pintaTableros();
+            btnInicio.setVisible(false);
+            if (m_50percentOrtogo(vectorPa1, vectorPa2)) {
+                System.out.println("Los patrones son lo suf. ortogonales con un valor de: " + ortogonalidad);
+
+            } else {
+                System.out.println("Los patrones NO son lo suf. ortogonales con un valor de: " + ortogonalidad);
+            }
+
+        } else {
+            if ("Buena".equals(m_recuperacion())) {
+                //Regresar al modelado 
+                System.out.println("La recuperacion buena con un valor de: " + recuBuena);
+                pintaTableros();
+                btnInicio.setVisible(false);
+
+            } else {
+               
+                JOptionPane.showMessageDialog(null, "¡¡¡¡¡Tendra una mala recuperacion!!!!!\n"
+                        + "GENERE NUEVOS PATRONES");
+                this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+                this.dispose();
+                GUI2 gui2 = new GUI2();
+
+            }
+        }
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -480,6 +509,7 @@ public class GUI2 extends javax.swing.JFrame {
         String recuperacion = "";
         recuBuena = 0.138 * num_neuronasN;
         recuExcelente = (num_neuronasN) / (4 * Math.log(num_neuronasN));
+        System.err.println(recuBuena + "    "+ recuExcelente);
 
         if (num_patronesM <= recuBuena) {
             recuperacion = "Buena";
